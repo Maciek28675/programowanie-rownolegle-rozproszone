@@ -28,12 +28,19 @@ def div_img(img, n):
 
     for i in range(n):
         start = i * step
-        end = (i + 1) * step if i < n - 1 else height
+        end = (i+1)* step if i < n-1 else height
         padded_start = start
         padded_end = end + 2
         img_fragments.append(img_gray_np_padded[padded_start:padded_end, :])
 
     return img_fragments
+
+
+def join_img(img_fragments):
+    full_img_np = np.vstack(img_fragments)
+    full_img = Image.fromarray(full_img_np.astype(np.uint8))
+
+    return full_img
 
 
 def sobel_filter(img_np):
@@ -65,6 +72,5 @@ if __name__ == '__main__':
     with Pool(10) as p:
         results = p.map(sobel_filter, strips)
 
-    sobel_full = np.vstack(results)
-    sobel_img = Image.fromarray(sobel_full.astype(np.uint8))
+    sobel_img = join_img(results)
     sobel_img.show()
